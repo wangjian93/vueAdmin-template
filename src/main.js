@@ -15,6 +15,9 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import util from '@/utils/util'
+//引入工具，配置代理
+Vue.prototype.$utilHelper = util
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

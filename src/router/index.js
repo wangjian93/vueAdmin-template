@@ -36,38 +36,153 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
+  //
+  // {
+  //   path: '/example',
+  //   component: Layout,
+  //   redirect: '/example/table',
+  //   name: 'Example',
+  //   meta: { title: 'Example', icon: 'example' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: 'Table', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: 'Tree', icon: 'tree' }
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/index'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
 
   {
-    path: '/example',
+    path: '/orgUnitMgr',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/orgUnitMgr/orgInfo',
+    name: 'OrgUnitMgr',
+    meta: { title: '组织管理', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'orgInfo',
+        name: 'OrgInfo',
+        component: () => import('@/views/org/OrgInfo'),
+        meta: { title: '部门信息', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'orgMgr',
+        name: 'orgMgr',
+        component: () => import('@/views/org/orgMgr'),
+        meta: { title: '部门管理', icon: 'table' }
+      },
+      {
+        path: 'orgHistory',
+        name: 'orgHistory',
+        component: () => import('@/views/org/OrgHistory'),
+        meta: { title: '历史部门', icon: 'table' }
+      },
+      {
+        path: 'orgChangeHistory',
+        name: 'orgChangeHistory',
+        component: () => import('@/views/org/orgChangeHistory'),
+        meta: { title: '变更历史', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/empInfraMgr',
+    component: Layout,
+    redirect: '/empInfraMgr/empInfra',
+    name: 'EmpInfraMgr',
+    meta: { title: '人事管理', icon: 'example' },
+    children: [
+      {
+        path: 'empInfra',
+        name: 'empInfra',
+        // component: () => import('@/views/emp/EmpInfra2'),
+        component: () => import('@/views/404'),
+        meta: { title: '员工信息', icon: 'table' }
+      },
+      {
+        path: 'addEmp',
+        name: 'addEmp',
+        // component: () => import('@/views/emp/AddMgr2'),
+        component: () => import('@/views/404'),
+        meta: { title: '入职管理', icon: 'table' }
+      },
+      {
+        path: 'editEmp',
+        name: 'editEmp',
+        // component: () => import('@/views/emp/EmpEdit2'),
+        component: () => import('@/views/404'),
+        meta: { title: '员工维护', icon: 'table' }
+      },
+      {
+        path: 'trunMgr',
+        name: 'trunMgr',
+        // component: () => import('@/views/emp/TurnMgr2'),
+        component: () => import('@/views/404'),
+        meta: { title: '转正管理', icon: 'table' }
+      },
+      {
+        path: 'empOrgUnitMgr',
+        name: 'empOrgUnitMgr',
+        // component: () => import('@/views/emp/EmpUnit2'),
+        component: () => import('@/views/404'),
+        meta: { title: '调职管理', icon: 'table' }
+      },
+      {
+        path: 'empTransfer',
+        name: 'empTransfer',
+        // component: () => import('@/views/emp/Transfer2'),
+        component: () => import('@/views/404'),
+        meta: { title: '晋升管理', icon: 'table' }
+      },
+      {
+        path: 'empQuit',
+        name: 'empQuit',
+        // component: () => import('@/views/emp/EmpQuit2'),
+        component: () => import('@/views/404'),
+        meta: { title: '离职管理', icon: 'table' }
+      },
+      {
+        path: 'empRestore',
+        name: 'empRestore',
+        // component: () => import('@/views/emp/EmpRestore2'),
+        component: () => import('@/views/404'),
+        meta: { title: '复职管理', icon: 'table' }
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/sysMgr',
     component: Layout,
+    redirect: '/sysMgr/codeMgr',
+    name: 'SysMgr',
+    meta: { title: '组织管理', icon: 'example' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'codeMgr',
+        name: 'CodeMgr',
+        component: () => import('@/views/sys/CodeMgr'),
+        meta: { title: 'Code管理', icon: 'table' }
       }
     ]
   },
