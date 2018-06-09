@@ -120,3 +120,10 @@ export function allAbolish(params) {
   })
 }
 
+export function getRelese(params) {
+  return request({
+    url: '/hr/oem/api/department/getRelese',
+    method: 'post',
+    params
+  })
+}

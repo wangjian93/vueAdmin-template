@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container" style="margin-top: -20px;">
     <el-form  :inline="true" :model="searchForm" label-width="100px" style="margin-top:10px;">
       <el-form-item label="工号">
         <el-input v-model="searchForm.empId" placeholder="员工工号"></el-input>

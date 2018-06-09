@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container" style="margin-top: -20px;">
     <el-form :rules="rules" :model="empInfra" label-width="100px" style="margin:10px 10px 10px 10px;">
 
       <el-row>

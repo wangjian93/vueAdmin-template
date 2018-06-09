@@ -5,13 +5,13 @@
         <span slot="label"><i class="el-icon-date"></i>列表组织</span>
         <el-form  :inline="true" :model="listQuery">
           <el-form-item label="部门">
-            <el-input v-model="listQuery.dept" size="mini" placeholder="部门"></el-input>
+            <el-input v-model="listQuery.dept" size="small" placeholder="部门"></el-input>
           </el-form-item>
           <el-form-item label="上级部门">
-            <el-input v-model="listQuery.parent" size="mini" placeholder="上级部门"></el-input>
+            <el-input v-model="listQuery.parent" size="small" placeholder="上级部门"></el-input>
           </el-form-item>
           <el-form-item label="部门层级">
-            <el-select v-model="listQuery.level" size="mini" clearable placeholder="请选择部门层级">
+            <el-select v-model="listQuery.level" size="small" clearable placeholder="请选择部门层级">
               <el-option
                 v-for="item in levelOptions"
                 :key="item.value"
@@ -21,12 +21,18 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="mini" @click="onQuery">查询</el-button>
-            <el-button type="primary" size="mini" @click="addNewOrg">新增组织</el-button>
+            <el-button type="primary" size="small" icon="el-icon-search" @click="onQuery">搜索</el-button>
+            <el-button type="primary" size="small" icon="el-icon-edit" @click="addNewOrg">新增组织</el-button>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="success"  size="small" v-popover:popover4 @click="getReleseTable">
+              <svg-icon icon-class="batch"></svg-icon>
+              批量发布</el-button>
           </el-form-item>
         </el-form>
 
-        <el-table :data="orgData" border size="mini" :row-class-name="tableRowClassName">
+        <el-table :data="orgData" border size="small" :row-class-name="tableRowClassName">
           <!--<el-table-column prop="deptId" label="ID" width="100" hidden></el-table-column>-->
           <el-table-column prop="deptNo" label="部门编号" width="100" align="center"></el-table-column>
           <el-table-column prop="name" label="部门名称" align="center"></el-table-column>
@@ -43,43 +49,39 @@
           <el-table-column label="操作" align="center">
             <template scope="scope">
               <el-button
-                v-show="scope.row.status!=1"
-                :disabled="scope.row.status==2"
                 @click="editOrg(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 编辑
               </el-button>
               <el-button
-                v-show="scope.row.status!=1"
-                :disabled="scope.row.status==2"
                 @click="changeOrg(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 变动
               </el-button>
+
               <el-button
-                v-show="scope.row.status!=1"
-                :disabled="scope.row.status==2"
                 @click="voidOrg(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 废止
               </el-button>
+
               <el-button
-                v-show="scope.row.status==1"
-                @click="releaseClick(scope.$index, scope.row)"
+              v-show="scope.row.status==1"
+              @click="releaseClick(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 发布
               </el-button>
-              <el-button
-                v-show="scope.row.status==1"
-                @click="recall(scope.$index, scope.row)"
-                type="text"
-                size="small">
-                撤回
-              </el-button>
+              <!--<el-button-->
+                <!--v-show="scope.row.status==1"-->
+                <!--@click="recall(scope.$index, scope.row)"-->
+                <!--type="text"-->
+                <!--size="small">-->
+                <!--撤回-->
+              <!--</el-button>-->
             </template>
           </el-table-column>
         </el-table>
@@ -132,7 +134,7 @@
                 :picker-options="pickerOptions">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="失效日期" v-show="orgInfraDialog.delFlag == true">
+            <el-form-item label="废止日期" v-show="orgInfraDialog.delFlag == true">
               <el-date-picker
                 v-model="orgInfra.expireDate"
                 type="date"
@@ -200,7 +202,7 @@
           :visible.sync="orgInfraDialog.expireDateShow"
           append-to-body>
           <el-form :model="orgInfra" label-width="100px" size="small">
-            <el-form-item label="失效日期">
+            <el-form-item label="废止日期">
               <el-date-picker
                 v-model="orgInfra.expireDate"
                 type="date"
@@ -212,6 +214,21 @@
             </el-form-item>
           </el-form>
         </el-dialog>
+
+        <el-popover
+          ref="popover4"
+          placement="bottom"
+          width="450"
+          trigger="click">
+          <el-button type="primary" @click="bitchRelease" size="mini">发布</el-button>
+          <el-table :data="gridData" size="mini" max-height="400" @selection-change="changeFun">
+            <el-table-column type="selection" width="55" @selection-change="changeFun"></el-table-column>
+            <el-table-column property="effectDate" label="生效时间"></el-table-column>
+            <el-table-column property="name" label="部门"></el-table-column>
+            <el-table-column property="actionName" label="操作类型"></el-table-column>
+          </el-table>
+        </el-popover>
+
       </el-tab-pane>
 
       <el-tab-pane label="树形组织" name="second">
@@ -233,10 +250,10 @@
 
       <el-tab-pane label="树形组织" name="four">
 
-        <el-row>
-          <el-button type="success"  size="small" @click="handle">提交</el-button>
-          <el-button type="warning"  size="small" @click="handle2">撤回</el-button>
-        </el-row>
+        <!--<el-row>-->
+          <!--<el-button type="success"  size="small" @click="handle2">提交</el-button>-->
+          <!--<el-button type="warning"  size="small" @click="handle2">撤回</el-button>-->
+        <!--</el-row>-->
         <span></span>
         <span></span>
         <el-row>
@@ -257,7 +274,7 @@
 </template>
 
 <script>
-  import { getOrgInfoHis, saveOrg, updateOrg, getOrgMrgTree, findHrCodes, release, save, abolish, allAbolish } from '@/api/org'
+  import { getOrgInfoHis, saveOrg, updateOrg, getOrgMrgTree, findHrCodes, release, save, abolish, allAbolish, getRelese } from '@/api/org'
   import { formatDate } from '@/utils/index'
   import MTree from '@/components/tree/Index.vue'
 
@@ -327,7 +344,10 @@
         treeLoading: true,
         filterText: '',
         levelOptions: [],
-        levelSelect: ''
+        levelSelect: '',
+
+        gridData: [],
+        multipleSelection: []
       }
     },
     created() {
@@ -414,27 +434,35 @@
         me.copyOrgInfr(row)
         me.orgInfra.action=4
       },
-      recall(index, row) {
-        var me = this
-        me.copyOrgInfr(row)
-        this.$message({
-          type: 'info',
-          message: '撤回失败'
-        })
-      },
+//      recall(index, row) {
+//        var me = this
+//        me.copyOrgInfr(row)
+//        this.$message({
+//          type: 'info',
+//          message: '撤回失败'
+//        })
+//      },
       releaseClick(index, row) {
         var me = this
-        me.orgInfraDialog.effectDateShow = true
         me.copyOrgInfr(row)
+        me.releaseAction()
       },
       releaseAction() {
+        var curTime = new Date();
+        var effectDate = new Date(Date.parse(this.orgInfra.effectDate));
+        if (effectDate < curTime) {
+          this.$message({
+            message: '生效时间已过期，不能发布,请重新选择生效时间',
+            type: 'success'
+          })
+          return
+        }
         release(this.orgInfra).then(response => {
+          me.onQuery()
           this.$message({
             message: '发布成功',
             type: 'success'
           })
-          me.orgInfraDialog.effectDateShow = false
-          me.onQuery()
         })
       },
 
@@ -460,7 +488,6 @@
         }
         this.getLevels(me.orgInfra.parent)
         me.levelSelect = ''+me.orgInfra.level
-        me.orgInfra.effectDate = ''
       },
       readOnlySet(bReadOnly, oppositeArray) {
         var me = this
@@ -475,6 +502,14 @@
       },
       orgInfraSave() {
         var me = this
+        var effectDate = this.orgInfra.effectDate
+        if(effectDate == "") {
+          this.$message({
+            message: '请选择生效时间',
+            type: 'warning'
+          })
+          return
+        }
         save(this.orgInfra).then(response => {
           this.$message({
             message: '保存成功,确认无误后请及时发布',
@@ -520,6 +555,7 @@
               message: '部门废止成功',
               type: 'success'
             })
+            this.onQuery()
           } else {
             me.open2()
           }
@@ -546,6 +582,7 @@
               message: '部门废止成功',
               type: 'success'
             })
+            this.onQuery()
           })
         }).catch(() => {
           this.$message({
@@ -606,7 +643,7 @@
 
 
       append(data) {
-        const newChild = { id: id++, label: 'testtest', children: [] };
+        const newChild = { id: id++, label: 'testtest', children: [], attributes:[] };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -623,7 +660,7 @@
       renderContent(h, { node, data, store }) {
         return (
           <span class="custom-tree-node">
-          <span>{node.label}</span>
+          <span>{node.label} || {data.attributes[0].level}</span>
         <span>
           <i
           style="color:#606266; font-size:1.2em; vertical-align:middle; margin: 0 5px;"
@@ -640,14 +677,31 @@
         </span>);
       },
 
-      handle() {
-        this.$message({
-          type: 'info',
-          message: '操作失败'
-        })
-      },
       handle2() {
         this.getTree()
+      },
+
+      getReleseTable() {
+        getRelese().then(response => {
+          this.gridData = response.data
+        })
+      },
+      changeFun(val) {
+        this.multipleSelection = val
+      },
+      bitchRelease() {
+        var arr = this.multipleSelection
+        console.log(arr)
+        for(var index in arr){
+          release(arr[index]).then(response => {
+            this.$message({
+              message: '发布成功',
+              type: 'success'
+            })
+            this.onQuery()
+            this.getReleseTable()
+          })
+        }
       }
 
     }

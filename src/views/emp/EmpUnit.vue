@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container" style="margin-top: -20px;">
     <el-form  :model="empInfra" :rules="rules" label-width="100px" ref="empInfra" style="margin:10px 10px 10px 10px; ">
 
       <el-row>
@@ -143,9 +143,8 @@
 </template>
 
 <script>
-  import util from '../../common/util'
   import NProgress from 'nprogress'
-  import { getIssuedOrgUnitInfra,queryOrgUnit } from '../../api/api';
+  import { getIssuedOrgUnitInfra,queryOrgUnit } from '@/api/mgr';
 
   export default {
     name: 'empOrgUnitMgr',

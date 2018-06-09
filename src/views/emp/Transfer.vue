@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container" style="margin-top: -20px;">
     <el-col :span="24" class="toolbar" style="margin-bottom:10px;float:right;">
       <el-button type="primary" @click="batchImport">批量导入</el-button>
     </el-col>
@@ -147,9 +147,8 @@
 
 <script>
 
-  import util from '../../common/util'
   import NProgress from 'nprogress'
-  import { generateEmpNumber,getIssuedOrgUnitInfra } from '../../api/api';
+  import { generateEmpNumber,getIssuedOrgUnitInfra } from '@/api/mgr';
 
   export default {
     name: 'empTransfer',

@@ -77,31 +77,31 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/orgUnitMgr/orgInfo',
     name: 'OrgUnitMgr',
-    meta: { title: '组织管理', icon: 'example' },
+    meta: { title: '组织管理', icon: 'org' },
     children: [
       {
         path: 'orgInfo',
         name: 'OrgInfo',
         component: () => import('@/views/org/OrgInfo'),
-        meta: { title: '部门信息', icon: 'table' }
+        meta: { title: '部门信息', icon: 'orgInfo' }
       },
       {
         path: 'orgMgr',
         name: 'orgMgr',
         component: () => import('@/views/org/orgMgr'),
-        meta: { title: '部门管理', icon: 'table' }
+        meta: { title: '部门管理', icon: 'orgMgr' }
       },
       {
         path: 'orgHistory',
         name: 'orgHistory',
         component: () => import('@/views/org/OrgHistory'),
-        meta: { title: '历史部门', icon: 'table' }
+        meta: { title: '历史部门', icon: 'orgHistory' }
       },
       {
         path: 'orgChangeHistory',
         name: 'orgChangeHistory',
         component: () => import('@/views/org/orgChangeHistory'),
-        meta: { title: '变更历史', icon: 'table' }
+        meta: { title: '变更历史', icon: 'orgChangeHistory' }
       }
     ]
   },
@@ -110,62 +110,75 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/empInfraMgr/empInfra',
     name: 'EmpInfraMgr',
-    meta: { title: '人事管理', icon: 'example' },
+    meta: { title: '人事管理', icon: 'emp' },
     children: [
       {
         path: 'empInfra',
         name: 'empInfra',
-        // component: () => import('@/views/emp/EmpInfra2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/EmpInfra'),
         meta: { title: '员工信息', icon: 'table' }
+      },
+      // {
+      //   path: 'empInfra2',
+      //   name: 'empInfra2',
+      //   redirect: '/empInfraMgr/empInfra',
+      //   meta: { title: '员工信息', icon: 'table' },
+      //   children: [
+      //     {
+      //       path: 'editEmp',
+      //       name: 'editEmp',
+      //       component: () => import('@/views/emp/EmpEdit'),
+      //       meta: { title: '员工维护', icon: 'table'},
+      //     }
+      //   ],
+      //   hidden: true
+      // },
+      {
+        path: 'editEmp',
+        name: 'editEmp',
+        component: () => import('@/views/emp/EmpEdit'),
+        meta: { title: '员工维护', icon: 'table'},
       },
       {
         path: 'addEmp',
         name: 'addEmp',
-        // component: () => import('@/views/emp/AddMgr2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/AddMgr'),
         meta: { title: '入职管理', icon: 'table' }
       },
-      {
-        path: 'editEmp',
-        name: 'editEmp',
-        // component: () => import('@/views/emp/EmpEdit2'),
-        component: () => import('@/views/404'),
-        meta: { title: '员工维护', icon: 'table' }
-      },
+      // {
+      //   path: 'editEmp',
+      //   name: 'editEmp',
+      //   component: () => import('@/views/emp/EmpEdit'),
+      //   meta: { title: '员工维护', icon: 'table' }
+      // },
       {
         path: 'trunMgr',
         name: 'trunMgr',
-        // component: () => import('@/views/emp/TurnMgr2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/TurnMgr'),
         meta: { title: '转正管理', icon: 'table' }
       },
       {
         path: 'empOrgUnitMgr',
         name: 'empOrgUnitMgr',
-        // component: () => import('@/views/emp/EmpUnit2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/EmpUnit'),
         meta: { title: '调职管理', icon: 'table' }
       },
       {
         path: 'empTransfer',
         name: 'empTransfer',
-        // component: () => import('@/views/emp/Transfer2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/Transfer'),
         meta: { title: '晋升管理', icon: 'table' }
       },
       {
         path: 'empQuit',
         name: 'empQuit',
-        // component: () => import('@/views/emp/EmpQuit2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/EmpQuit'),
         meta: { title: '离职管理', icon: 'table' }
       },
       {
         path: 'empRestore',
         name: 'empRestore',
-        // component: () => import('@/views/emp/EmpRestore2'),
-        component: () => import('@/views/404'),
+        component: () => import('@/views/emp/EmpRestore'),
         meta: { title: '复职管理', icon: 'table' }
       }
     ]
