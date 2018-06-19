@@ -1,9 +1,10 @@
 <template>
   <div class="app-container" style="margin-top: -20px;">
-    <el-form  :model="empForm" status-icon :rules="rules" ref="empForm" label-position="left" label-width="100px" style="margin:10px 10px 10px 10px;">
+    <el-form  :model="empForm" status-icon :rules="rules" ref="empForm" size="small" label-position="left" label-width="100px" style="margin:10px 10px 10px 10px;">
       <el-form-item>
-        <el-button type="primary" size="large" @click="formSubmit('empForm')">保存</el-button>
-        <el-button type="primary" size="large" @click="formReset('empForm')">清空</el-button>
+        <el-button type="primary" size="small" @click="formSubmit('empForm')">保存</el-button>
+        <!--<el-button type="success" size="small" @click="formReset('empForm')">清空</el-button>-->
+        <el-button type="success" size="small" @click="formReset('empForm')">导出</el-button>
       </el-form-item>
 
       <el-card class="box-card">
@@ -205,20 +206,12 @@
 
             <el-form-item label="主属部门">
               <template>
-                <el-select
-                  v-model="empForm.position.orgUnit"
-                  filterable
-                  remote
-                  clearable
-                  placeholder="请输入关键词"
-                  :remote-method="remoteGetOrg" >
-                  <el-option
-                    v-for="item in orgUnitList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+                <el-input
+                  v-model="empForm.position.orgName"
+                  @click.native="showInnerVisible"
+                  placeholder="请输入部门"
+                  :disabled=orgInfraDialog.parent>
+                </el-input>
               </template>
             </el-form-item>
 
@@ -255,9 +248,9 @@
             <el-form-item label="岗位">
               <el-select v-model="empForm.position.posId" placeholder="请选择">
                 <el-option
-                  v-for="item in positionList"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in selectList.positionList"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -322,13 +315,38 @@
       </el-card>
     </el-form>
 
+    <el-dialog
+      width="30%"
+      title="部门选择"
+      :visible.sync="orgInfraDialog.innerVisible"
+      append-to-body>
+      <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="padding-bottom:10px;"></el-input>
+      <el-card class="box-card" shadow="always" style="height:400px;overflow:auto;">
+        <el-tree
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          class="filter-tree"
+          :data="orgTree"
+          node-key="id"
+          :props="treeprops"
+          @node-click="handleNodeClick"
+          :expand-on-click-node="false"
+          :highlight-current="true"
+          :filter-node-method="filterNode"
+          ref="tree"
+          accordion
+          append-to-body></el-tree>
+      </el-card>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 
   import NProgress from 'nprogress'
-  import { getEmpBasicInfra, queryOrgUnit, getEmpMainData, getEmpInfo, getFamily, getPromotion, getPosition } from '@/api/mgr';
+  import { getEmpBasicInfra, queryOrgUnit, getEmpMainData, getEmpInfo, getFamily, getPromotion, getPosition, getPositionList, updateEmp } from '@/api/mgr';
+  import { getOrgTree } from '@/api/org'
   import img_404 from '@/assets/404_images/404.png'
 
   export default {
@@ -337,6 +355,17 @@
       {
         return {
           isEdit: false,
+
+          orgInfraDialog: {
+            innerVisible: false
+          },
+          filterText: '',
+          orgTree: [],
+          treeprops: {
+            children: 'children',
+            label: 'label'
+          },
+
           genderList: [
             {label: '男', value: '0'},
             {label: '女', value: '1'}
@@ -414,10 +443,7 @@
             {label: '电子商务服务课', value: '5d85ad81dfe24414836c460e837091a9'},
           ],
 
-          positionList: [
-            {label: '电子商务服务课_员工', value: '92045b70694e4aa498f4c2cb8a56f5b3'},
-            {label: '电子商务服务课_主管', value: '5d85ad81dfe24414836c460e837091a9'}
-          ],
+          positionList: [],
           settlingList: [
             {label: '未定义', value: '0'}
           ],
@@ -426,6 +452,94 @@
           batchUploadVisible:false,
           batchUploadForm:{
             "fileList":[]
+          },
+
+
+
+
+          selectList: {
+            genderList: [
+              {label: '男', value: '0'},
+              {label: '女', value: '1'}
+            ],
+            nationList: [
+              {label: '汉族', value: '0'},
+              {label: '藏族', value: '1'}
+            ],
+            originList: [
+              {label: '上海', value: '0'},
+              {label: '北京', value: '1'},
+              {label: '江苏', value: '2'}
+            ],
+            educationList: [
+              {label: '专科', value: '0'},
+              {label: '本科', value: '1'},
+              {label: '研究生', value: '2'},
+              {label: '博士', value: '3'},
+              {label: '其他', value: '4'}
+            ],
+            politicsList: [
+              {label: '党员', value: '0'},
+              {label: '团员', value: '1'},
+              {label: '其他', value: '2'}
+            ],
+            marriedList: [
+              {label: '未婚', value: '0'},
+              {label: '已婚', value: '1'},
+              {label: '离异', value: '2'}
+            ],
+            relationList: [
+              {label: '父亲', value: '0'},
+              {label: '母亲', value: '1'},
+              {label: '兄弟', value: '2'},
+              {label: '姐妹', value: '3'},
+              {label: '朋友', value: '4'},
+              {label: '其他', value: '5'}
+            ],
+            scopeIdList: [
+              {label: 'IVO', value: '0'},
+              {label: 'IVE', value: '1'}
+            ],
+            operatorList: [
+              {label: 'IDL', value: '0'},
+              {label: 'DL', value: '1'}
+            ],
+
+            groupIdList: [
+              {label: 'C', value: '0'},
+              {label: 'J', value: '2'},
+              {label: 'T', value: '3'}
+
+            ],
+            sourceList: [
+              {label: '推荐', value: '0'},
+              {label: '外包', value: '1'},
+              {label: '派遣', value: '2'}
+            ],
+            statusIdList: [
+              {label: '临时', value: '0'},
+              {label: '实习', value: '1'},
+              {label: '试用', value: '2'},
+              {label: '正式', value: '3'}
+            ],
+            gradeIdList: [
+              {label: 'G5', value: '0'},
+              {label: 'G6', value: '1'},
+              {label: 'G7', value: '2'}
+            ],
+            titleIdList: [
+              {label: '员工', value: '0'},
+              {label: '课长', value: '1'},
+              {label: '经理', value: '2'}
+            ],
+            orgUnitList: [
+              {label: '电子商务服务课', value: '5d85ad81dfe24414836c460e837091a9'},
+            ],
+
+            positionList: [],
+            settlingList: [
+              {label: '未定义', value: '0'}
+            ]
           },
           empForm: {
             base: {
@@ -469,74 +583,79 @@
             ],                  //紧急联系人
 
             promotion: {gradeId: '', titleId: ''},     //职务（晋升）
-            position: {posId: '', isMaster: '', orgUnit: ''},  //岗位
+            position: {posId: '', isMaster: '', orgUnit: '', posName: '', orgName: ''},  //岗位
 
-            imageUrl: 'api/SpringMVC006/image?fileName=dog.jpg'
+            imageUrl: ''
           },
           rules: {
-            empId: [
-              { required: true, message: '请获得工号', trigger: 'blur'  }
-            ],
-            gender: [
-               { required: true, message: '请选择性别', trigger: 'change' }
-            ],
-            idType: [
-              { required: true, message: '请选择证件类型', trigger: 'change' }
-            ],
-            idNumber: [
-              { required: true, message: '请输入证件号码', trigger: 'blur' }
-            ],
-            firstName: [
-              { required: true, message: '请输入姓', trigger: 'blur' }
-            ],
-            lastName: [
-              { required: true, message: '请输入名', trigger: 'blur' }
-            ],
-            nation: [
-              { required: true, message: '请输民族', trigger: 'blur' }
-            ],
-            birthDate: [
-              { required: true, message: '请选择出生日期', trigger: 'change' }
-            ],
-            education: [
-              { required: true, message: '请选择学历', trigger: 'change' }
-            ],
-            politics: [
-              { required: true, message: '请选择政治面貌', trigger: 'change' }
-            ],
-            isMarried: [
-              { required: true, message: '请选择婚姻状况', trigger: 'change' }
-            ],
-            registerDate: [
-              { required: true, message: '请选择入职日期', trigger: 'change' }
-            ],
-            isOperator: [
-              { required: true, message: '请选择结算方式', trigger: 'change' }
-            ],
-            group: [
-              { required: true, message: '请选择组别', trigger: 'change' }
-            ],
-            settling: [
-              { required: true, message: '请选择IDL/DL', trigger: 'change' }
-            ],
-            scope: [
-              { required: true, message: '请选择范围', trigger: 'change' }
-            ],
-            source: [
-              { required: true, message: '请选择来源', trigger: 'change' }
-            ]
+//            empId: [
+//              { required: true, message: '请获得工号', trigger: 'blur'  }
+//            ],
+//            gender: [
+//               { required: true, message: '请选择性别', trigger: 'change' }
+//            ],
+//            idType: [
+//              { required: true, message: '请选择证件类型', trigger: 'change' }
+//            ],
+//            idNumber: [
+//              { required: true, message: '请输入证件号码', trigger: 'blur' }
+//            ],
+//            firstName: [
+//              { required: true, message: '请输入姓', trigger: 'blur' }
+//            ],
+//            lastName: [
+//              { required: true, message: '请输入名', trigger: 'blur' }
+//            ],
+//            nation: [
+//              { required: true, message: '请输民族', trigger: 'blur' }
+//            ],
+//            birthDate: [
+//              { required: true, message: '请选择出生日期', trigger: 'change' }
+//            ],
+//            education: [
+//              { required: true, message: '请选择学历', trigger: 'change' }
+//            ],
+//            politics: [
+//              { required: true, message: '请选择政治面貌', trigger: 'change' }
+//            ],
+//            isMarried: [
+//              { required: true, message: '请选择婚姻状况', trigger: 'change' }
+//            ],
+//            registerDate: [
+//              { required: true, message: '请选择入职日期', trigger: 'change' }
+//            ],
+//            isOperator: [
+//              { required: true, message: '请选择结算方式', trigger: 'change' }
+//            ],
+//            group: [
+//              { required: true, message: '请选择组别', trigger: 'change' }
+//            ],
+//            settling: [
+//              { required: true, message: '请选择IDL/DL', trigger: 'change' }
+//            ],
+//            scope: [
+//              { required: true, message: '请选择范围', trigger: 'change' }
+//            ],
+//            source: [
+//              { required: true, message: '请选择来源', trigger: 'change' }
+//            ]
           }
         }
       }
+    },
+    watch: {
+      filterText(val) {
+        this.$refs.tree.filter(val)
+      },
     },
     created: function () {
       var me = this;
       //获得下拉框选项内容
       me.getMainData();
-
       var params = {empId : this.$route.query.empId}
       getEmpInfo(params).then(response => {
         this.empForm.base = response.data
+        this.empForm.imageUrl = 'api/SpringMVC006/image?empNo=' + this.empForm.base.empNo
       })
       getFamily(params).then(response => {
         this.empForm.family = response.data
@@ -546,9 +665,62 @@
       })
       getPosition(params).then(response => {
         this.empForm.position = response.data
+        this.deptName
+        this.getPositions(this.empForm.position.orgUnit)
       })
+      //获取组织树
+      me.getTree()
     },
     methods: {
+      getTree() {
+        getOrgTree().then(response => {
+          this.orgTree = response.data
+        })
+      },
+      showInnerVisible() {
+        this.orgInfraDialog.innerVisible = true
+      },
+      filterNode(value, data) {
+        if (!value) return true
+        return data.label.indexOf(value) !== -1
+      },
+      handleNodeClick(data) {
+        this.orgInfraDialog.innerVisible = false
+        this.empForm.position.orgName = "["+data.id+"]" + data.label
+        this.empForm.position.orgUnit = data.attributes[0].id
+        this.getPositions(this.empForm.position.orgUnit)
+      },
+      getPositions(deptId) {
+        let param = { 'deptId': deptId }
+        getPositionList(param).then(response => {
+          this.selectList.positionList = response.data
+        })
+      },
+
+      formSubmit( formName ) {
+        var flag
+        this.$refs[ formName ].validate((valid) => {
+          if ( valid ) {
+            flag = true
+          } else {
+            flag = false
+          }
+        });
+        console.log(flag)
+
+        if(flag) {
+          updateEmp(this.empForm.base).then(response => {
+            var empNo = response.empNo
+            this.empForm.empNo = empNo
+            console.log(this.empForm.empNo)
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+          })
+        }
+      },
+
       getEmpFormInfra(  ){
         //var me = this;
         alert(  "1234" );
@@ -565,15 +737,6 @@
           if( me[key] )me[key] = res.data[key];
         }
       });
-      },
-      formSubmit( formName ) {
-          this.$refs[ formName ].validate((valid) => {
-              if ( valid ) {
-                return false;
-              } else {
-                return false;
-              }
-          });
       },
       formReset( formName ){
         var me = this;

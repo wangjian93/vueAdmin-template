@@ -1,10 +1,12 @@
 <template>
   <div class="app-container" style="margin-top: -20px;">
-    <el-form  :inline="true" :model="searchForm" label-width="100px" style="margin-top:20px;">
+    <el-form  :inline="true" :model="searchForm" label-width="100px"  style="margin-top:20px;">
 
       <el-form-item label="员工">
-        <el-input v-model="searchForm.name" placeholder="员工"></el-input>
+        <el-input v-model="searchForm.name" size="mini" placeholder="员工"></el-input>
       </el-form-item>
+
+
       <!--<el-form-item label="所属组织">-->
         <!--<el-input v-model="searchForm.orgUnit" placeholder="员工"></el-input>-->
       <!--</el-form-item>-->
@@ -32,68 +34,24 @@
       <!--<el-form-item label="入职日期">-->
         <!--<el-input v-model="searchForm.registerDate" placeholder="入职日期"></el-input>-->
       <!--</el-form-item>-->
+
       <el-form-item>
-        <el-button type="primary" @click="onQuery">查询</el-button>
+        <el-button type="primary" size="mini" @click="onQuery">查询</el-button>
       </el-form-item>
     </el-form>
 
-    <!--<el-col :span="24" class="toolbar" style="padding-bottom:10px;">-->
-      <!--<el-button type="primary" @click="onQuery">查询</el-button>-->
-    <!--</el-col>-->
-
-
-    <el-table
-      :data="empData"
-      border
-      max-height="500"
-      style="width: 100%">
-      <el-table-column
-        fixed
-        prop="empNo"
-        label="工号">
-      </el-table-column>
-      <el-table-column
-        fixed
-        prop="name"
-        label="姓名">
-      </el-table-column>
-      <el-table-column
-        fixed
-        prop="gender"
-        label="性别">
-      </el-table-column>
-      <el-table-column
-        prop="deptName"
-        label="部门">
-      </el-table-column>
-      <el-table-column
-        prop="position"
-        label="岗位">
-      </el-table-column>
-      <el-table-column
-        prop="gradeId"
-        label="职等">
-      </el-table-column>
-      <el-table-column
-        prop="titleId"
-        label="职位">
-      </el-table-column>
-      <el-table-column
-        prop="registerDate"
-        label="入职日期">
-      </el-table-column>
-      <el-table-column
-        prop="isOperator"
-        label="DL/IDL">
-      </el-table-column>
-      <el-table-column
-        prop="education"
-        label="学历">
-      </el-table-column>
-
-      <el-table-column
-        fixed="right"
-        label="操作">
+    <el-table :data="empData" border size="mini">
+      <el-table-column prop="empNo" label="工号" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+      <el-table-column prop="genderName" label="性别" align="center"></el-table-column>
+      <el-table-column prop="deptName" label="部门" align="center"></el-table-column>
+      <el-table-column prop="position" label="岗位" align="center"></el-table-column>
+      <el-table-column prop="gradeIdName" label="职等" align="center"></el-table-column>
+      <el-table-column prop="titleIdName" label="职位" align="center"></el-table-column>
+      <el-table-column prop="registerDate" label="入职日期" align="center"></el-table-column>
+      <el-table-column prop="isOperatorName" label="DL/IDL" align="center"></el-table-column>
+      <el-table-column prop="educationName" label="学历" align="center"></el-table-column>
+      <el-table-column label="操作">
         <template scope="scope">
           <el-button
             @click.native.prevent="openRow(scope.$index, scope.row)"

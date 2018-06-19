@@ -95,3 +95,44 @@ export function getPosition(params) {
     params
   })
 }
+
+export function getPositionList(params) {
+  return request({
+    url: '/hr/oem/position/getPosition',
+    method: 'post',
+    params
+  })
+}
+
+
+export function updateEmp(params) {
+  return request({
+    url: '/hr/oem/api/employee/updateEmp',
+    method: 'post',
+    params
+  })
+}
+
+export function saveEmployee(params) {
+  return request({
+    url: '/hr/oem/api/employee/save2',
+    method: 'post',
+    params
+  })
+}
+
+export function queryNotSubmitEmployee(params) {
+  return request({
+    url: '/hr/oem/api/employee/queryNotSubmitEmployee',
+    method: 'post',
+    params
+  })
+}
+
+export function submitEmployeeBatch(params) {
+  return request({
+    url: '/hr/oem/api/employee/submitEmployeeBatch',
+    method: 'post',
+    params
+  })
+}

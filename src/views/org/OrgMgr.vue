@@ -591,57 +591,6 @@
           })
         })
       },
-
-//////////////////////////////////////////////////////
-//      handleNodeClick(nodeData){
-////            if(nodeData.status == -1 ){
-////              this.$http.get(this.HOST+'/admin/data/table/'+nodeData.label+'/create').then((response) => {
-////                if(response.status == 200){
-////                  var data = response.body.data
-////                  var tableParam = {
-////                    name:nodeData.label,
-////                    label:nodeData.label,
-////                    type:'data',
-////                    info:data,
-////                    active:true
-////                  }
-////                  this.$store.commit('addTabItem', tableParam)
-////                }
-////              })
-////            }
-//      },
-//      SaveEdit(parentNode,data,next){
-////        var param = {
-////          isAdd:data.isAdd,
-////          parentNode:parentNode,
-////          node:data
-////        }
-//        next(true, 2222222)
-////        id = id + 1
-////            this.$http.post(this.HOST+'/admin/system/tree/edit',param).then((response) => {
-////              if(response.status == 200){
-////                if(data.isAdd){
-////                  next(true,response.body.data.tid)
-////                }else{
-////                  next(true)
-////                }
-////              }
-////            })
-//      },
-//      DelNode(parentNode,data,next){
-////        var param = {
-////          node:data
-////        }
-//        next(true)
-////            this.$http.post(this.HOST+'/admin/system/tree/del',param).then((response) => {
-////              if(response.status == 200){
-////                next(true)
-////              }
-////            })
-//      },
-///////////////////////////////////////////////
-
-
       append(data) {
         const newChild = { id: id++, label: 'testtest', children: [], attributes:[] };
         if (!data.children) {
