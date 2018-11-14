@@ -7,3 +7,20 @@ export function getCodes(params) {
     params
   })
 }
+
+export function saveCode(params) {
+  return request({
+    url: '/sys/code/save',
+    method: 'post',
+    params
+  })
+}
+
+export function getEmployeeSelectOptions(params) {
+  return request({
+    url: '/sys/code/getEmployeeSelectOptions',
+    method: 'post',
+    params
+  })
+
+}

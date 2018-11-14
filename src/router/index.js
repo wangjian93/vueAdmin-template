@@ -118,43 +118,51 @@ export const constantRouterMap = [
         component: () => import('@/views/emp/EmpInfra'),
         meta: { title: '员工信息', icon: 'table' }
       },
-      // {
-      //   path: 'empInfra2',
-      //   name: 'empInfra2',
-      //   redirect: '/empInfraMgr/empInfra',
-      //   meta: { title: '员工信息', icon: 'table' },
-      //   children: [
-      //     {
-      //       path: 'editEmp',
-      //       name: 'editEmp',
-      //       component: () => import('@/views/emp/EmpEdit'),
-      //       meta: { title: '员工维护', icon: 'table'},
-      //     }
-      //   ],
-      //   hidden: true
-      // },
       {
         path: 'editEmp',
         name: 'editEmp',
         component: () => import('@/views/emp/EmpEdit'),
         meta: { title: '员工维护', icon: 'table'},
+        hidden: true
+      },
+      {
+        path: 'editEmp2',
+        name: 'editEmp2',
+        component: () => import('@/views/emp/EmpEdit2'),
+        meta: { title: '员工维护', icon: 'table'},
+        hidden: true
+      },
+      {
+        path: 'editEmp3',
+        name: 'editEmp3',
+        component: () => import('@/views/emp/EmpEdit3'),
+        meta: { title: '员工维护', icon: 'table'},
+        hidden: true
       },
       {
         path: 'addEmp',
         name: 'addEmp',
-        component: () => import('@/views/emp/AddMgr'),
+        component: () => import('@/views/emp/EntryMgr'),
         meta: { title: '入职管理', icon: 'table' }
       },
-      // {
-      //   path: 'editEmp',
-      //   name: 'editEmp',
-      //   component: () => import('@/views/emp/EmpEdit'),
-      //   meta: { title: '员工维护', icon: 'table' }
-      // },
+      {
+        path: 'employeeInfo',
+        name: 'employeeInfo',
+        component: () => import('@/views/emp/employeeInfo'),
+        meta: { title: '员工信息显示', icon: 'table'},
+        hidden: true
+      },
+      {
+        path: 'addEmp2',
+        name: 'addEmp2',
+        component: () => import('@/views/emp/AddMgr3'),
+        meta: { title: '人员录入', icon: 'table' },
+        hidden: true
+      },
       {
         path: 'trunMgr',
         name: 'trunMgr',
-        component: () => import('@/views/emp/TurnMgr'),
+        component: () => import('@/views/emp/RegularMgr'),
         meta: { title: '转正管理', icon: 'table' }
       },
       {
@@ -164,11 +172,17 @@ export const constantRouterMap = [
         meta: { title: '调职管理', icon: 'table' }
       },
       {
-        path: 'empTransfer',
-        name: 'empTransfer',
-        component: () => import('@/views/emp/Transfer'),
+        path: 'empTransfer2',
+        name: 'empTransfer2',
+        component: () => import('@/views/emp/PromotionMgr'),
         meta: { title: '晋升管理', icon: 'table' }
       },
+      // {
+      //   path: 'empTransfer',
+      //   name: 'empTransfer',
+      //   component: () => import('@/views/emp/Transfer'),
+      //   meta: { title: '晋升管理', icon: 'table' }
+      // },
       {
         path: 'empQuit',
         name: 'empQuit',

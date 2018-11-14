@@ -117,6 +117,22 @@ export function saveEmployee(params) {
   return request({
     url: '/hr/oem/api/employee/save2',
     method: 'post',
+    data: params
+  })
+}
+
+export function updateEmployee(params) {
+  return request({
+    url: '/hr/oem/api/employee/update2',
+    method: 'post',
+    data: params
+  })
+}
+
+export function saveEmployee2(params) {
+  return request({
+    url: '/hr/oem/api/employee/save3',
+    method: 'post',
     params
   })
 }
@@ -132,6 +148,133 @@ export function queryNotSubmitEmployee(params) {
 export function submitEmployeeBatch(params) {
   return request({
     url: '/hr/oem/api/employee/submitEmployeeBatch',
+    method: 'post',
+    data: params
+  })
+}
+
+export function findEmployee(params) {
+  return request({
+    url: '/hr/oem/api/employee/findEmployee',
+    method: 'post',
+    params
+  })
+}
+
+export function findEmployeeById(params) {
+  return request({
+    url: '/hr/oem/api/employee/findEmployeeById',
+    method: 'post',
+    params
+  })
+}
+
+export function deleteEmployees(params) {
+  return request({
+    url: '/hr/oem/api/employee/deleteEmployees',
+    method: 'post',
+    params
+  })
+}
+
+export function findEmployeesById(params) {
+  return request({
+    url: '/hr/oem/api/employee/findEmployeesById',
+    method: 'post',
+    params
+  })
+}
+
+export function downloadExcelTemplate() {
+  return request({
+    url: '/SpringMVC006/load',
+    method: 'get',
+
+  })
+}
+
+export function getPersonalInformation(params) {
+  return request({
+    url: '/hr/oem/api/employee/getPersonalInformation',
+    method: 'post',
+    params
+  })
+}
+
+export function getContact(params) {
+  return request({
+    url: '/hr/oem/api/employee/getContact',
+    method: 'post',
+    params
+  })
+}
+
+export function getRelativeInformation(params) {
+  return request({
+    url: '/hr/oem/api/employee/getRelativeInformation',
+    method: 'post',
+    params
+  })
+}
+
+export function getJobInformation(params) {
+  return request({
+    url: '/hr/oem/api/employee/getJobInformation',
+    method: 'post',
+    params
+  })
+}
+
+export function updatePersonalInformation(params) {
+  return request({
+    url: '/hr/oem/api/employee/updatePersonalInformation',
+    method: 'post',
+    params
+  })
+}
+
+export function updateContact(params) {
+  return request({
+    url: '/hr/oem/api/employee/updateContact',
+    method: 'post',
+    params
+  })
+}
+
+export function getEmployeeForRegular(params) {
+  return request({
+    url: '/hr/oem/api/employee/getEmployeeForRegular',
+    method: 'post',
+    params
+  })
+}
+
+export function regular(params) {
+  return request({
+    url: '/hr/oem/api/employee/regular',
+    method: 'post',
+    params
+  })
+}
+
+export function getEmployeeGUID() {
+  return request({
+    url: '/hr/oem/api/employee/getEmployeeGUID',
+    method: 'post'
+  })
+}
+
+export function save(params) {
+  return request({
+    url: '/hr/oem/api/employee/save',
+    method: 'post',
+    params
+  })
+}
+
+export function getEmployeesInfoById(params) {
+  return request({
+    url: '/hr/oem/api/employee/getEmployeesInfoById',
     method: 'post',
     params
   })

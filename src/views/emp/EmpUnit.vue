@@ -1,262 +1,471 @@
 <template>
-  <div class="app-container" style="margin-top: -20px;">
-    <el-form  :model="empInfra" :rules="rules" label-width="100px" ref="empInfra" style="margin:10px 10px 10px 10px; ">
+  <div class="app-container">
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" style="min-height: 680px;">
+      <el-tab-pane label="员工调职" name="first">
+          <!--<h4>查询条件:</h4>-->
+          <el-card shadow="never">
+            <el-form :model="searchForm" size="small" ref="searchForm" label-width="100px" label-position="left">
+              <el-row :gutter="80">
+                <el-col :span="10">
+                  <el-form-item label="工号">
+                    <el-input v-model="searchForm.empNo" placeholder="员工工号"></el-input>
+                  </el-form-item>
+                  <el-form-item label="部门">
+                    <el-input v-model="searchForm.deptName" placeholder="员工工号"></el-input>
+                  </el-form-item>
+                  <el-form-item label="岗位类型">
+                    <template>
+                      <el-radio-group v-model="searchForm.rank">
+                        <el-radio :label="0">主管</el-radio>
+                        <el-radio :label="1">副主管</el-radio>
+                        <el-radio :label="2">员工</el-radio>
+                        <el-radio :label="3">文员</el-radio>
+                      </el-radio-group>
+                    </template>
+                  </el-form-item>
+                  <el-form-item label="是否主岗位">
+                    <template>
+                      <el-checkbox v-model="searchForm.isMaster" >是</el-checkbox>
+                    </template>
+                  </el-form-item>
+                </el-col>
 
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="员工工号"  prop="empId">
-            <el-input v-model="empInfra.empId" placeholder="员工工号"></el-input>
+                <el-col :span="10">
+                  <el-form-item label="姓名">
+                    <el-input v-model="searchForm.name" placeholder="员工姓名"></el-input>
+                  </el-form-item>
+                  <el-form-item label="入职日期">
+                    <el-date-picker
+                      value-format="yyyy-MM-dd"
+                      v-model="searchForm.registerDate"
+                      placeholder="选择日期范围">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-form-item>
+                <el-button type="primary" size="small" @click="findPositions_">查询</el-button>
+                <el-button type="" size="small" @click="onClear">重置</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+
+
+          <!--</el-card>-->
+
+          <!--<el-card>-->
+          <h4>查询信息:</h4>
+          <el-table :data="responsibility" border size="mini" style="min-height: 400px;">
+            <el-table-column type="index" width="40" align="center"></el-table-column>
+            <el-table-column
+              prop="empNo" label="工号" align="center">
+            </el-table-column>
+            <el-table-column
+              prop="empName" label="姓名" align="center">
+            </el-table-column>
+            <el-table-column
+              prop="deptName" label="部门" align="center" minWidth="120">
+            </el-table-column>
+            <el-table-column
+              prop="posName" label="岗位" align="center" minWidth="120">
+            </el-table-column>
+            <el-table-column
+              prop="rank" label="岗位类型" align="center">
+            </el-table-column>
+            <el-table-column label="是否主岗位" align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.isMaster">是</span>
+                <span v-else>否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="生效日期" align="center" minWidth="120">
+              <template slot-scope="scope">
+                <el-tag>
+                  <i class="el-icon-time"></i>
+                  <span style="margin-left: 10px">{{ scope.row.effectDate }}</span>
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="失效日期" align="center" minWidth="120">
+              <template scope="scope">
+                <span v-if="scope.row.expireDate == '9999-12-31'">-</span>
+                <el-tag v-else type="danger">
+                  <i class="el-icon-time"></i>
+                  <span style="margin-left: 10px">{{ scope.row.expireDate }}</span>
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center">
+              <template scope="scope" v-if="scope.row.expireDate == '9999-12-31'">
+                <el-button
+                  v-if="scope.row.isMaster"
+                  @click="edit(scope.$index, scope.row)"
+                  type="text"
+                  size="small">
+                  转岗
+                </el-button>
+                <el-button
+                  v-if="scope.row.isMaster"
+                  @click="add(scope.$index, scope.row)"
+                  type="text"
+                  size="small">添加副岗位
+                </el-button>
+                <el-button
+                  v-else
+                  @click="del(scope.$index, scope.row)"
+                  type="text"
+                  size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="调职记录" name="second">
+        <el-form  :inline="true" size="small" :model="searchForm">
+          <el-form-item label="工号">
+            <el-input v-model="searchFormHis.empId" placeholder="员工工号"></el-input>
           </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="姓名">
-            <el-input v-model="empInfra.name" placeholder="员工姓名" readonly></el-input>
+            <el-input v-model="searchFormHis.name" placeholder="员工姓名"></el-input>
           </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="入职日期">
-            <el-input v-model="empInfra.registerDate" placeholder="入职日期" readonly></el-input>
+          <el-form-item label="部门">
+            <el-input v-model="searchFormHis.deptName" placeholder="员工工号"></el-input>
           </el-form-item>
-        </el-col>
-      </el-row>
-
-      <div style="margin:5px 0px 10px 20px;">部门信息</div>
-
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="部门名称"   prop="orgUnit">
-            <template>
-              <el-select
-                v-model="empInfra.orgUnit"
-                filterable
-                remote
-                clearable
-                placeholder="请输入部门ID或名称"
-                :remote-method="remoteGetOrg" >
-                <el-option
-                  v-for="item in orgUnitList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+          <el-form-item>
+            <el-button type="primary" size="mini" @click="findPositionsHis_">查询</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table :data="responsibility_" border size="mini" style="min-height: 400px;">
+          <el-table-column type="index" width="40" align="center"></el-table-column>
+          <el-table-column
+            prop="empNo" label="工号" align="center">
+          </el-table-column>
+          <el-table-column
+            prop="empName" label="姓名" align="center">
+          </el-table-column>
+          <el-table-column
+            prop="deptName" label="部门" align="center" minWidth="120">
+          </el-table-column>
+          <el-table-column
+            prop="posName" label="岗位" align="center" minWidth="120">
+          </el-table-column>
+          <el-table-column
+            prop="rank" label="岗位类型" align="center">
+          </el-table-column>
+          <el-table-column label="是否主岗位" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.isMaster">是</span>
+              <span v-else>否</span>
             </template>
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item label="岗位"   prop="position">
-            <template>
-              <el-radio class="radio" v-model="empInfra.position" label="1">主管</el-radio>
-              <el-radio class="radio" v-model="empInfra.position" label="2">副主管</el-radio>
-              <el-radio class="radio" v-model="empInfra.position" label="3">文员</el-radio>
-              <el-radio class="radio" v-model="empInfra.position" label="4">员工</el-radio>
+          </el-table-column>
+          <el-table-column label="生效日期" align="center" minWidth="120">
+            <template slot-scope="scope">
+              <el-tag>
+                <i class="el-icon-time"></i>
+                <span style="margin-left: 10px">{{ scope.row.effectDate }}</span>
+              </el-tag>
             </template>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="主属部门"   prop="isMaster">
-            <template>
-              <el-checkbox v-model="empInfra.isMaster" >是</el-checkbox>
+          </el-table-column>
+          <el-table-column label="失效日期" align="center" minWidth="120">
+            <template scope="scope">
+              <span v-if="scope.row.expireDate == '9999-12-31'">-</span>
+              <el-tag v-else type="danger">
+                <i class="el-icon-time"></i>
+                <span style="margin-left: 10px">{{ scope.row.expireDate }}</span>
+              </el-tag>
             </template>
-          </el-form-item>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item label="生效日期" prop="effect_date">
-            <el-date-picker
-              v-model="empInfra.effect_date"
-              type="date"
-              placeholder="选择日期">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+          </el-table-column>
+          <el-table-column label="备注" align="center">
+            <!--<template scope="scope" v-if="scope.row.expireDate == '9999-12-31'">-->
+              <!--<el-button-->
+                <!--v-if="scope.row.isMaster"-->
+                <!--@click="edit(scope.$index, scope.row)"-->
+                <!--type="text"-->
+                <!--size="small">-->
+                <!--转岗-->
+              <!--</el-button>-->
+              <!--<el-button-->
+                <!--v-if="scope.row.isMaster"-->
+                <!--@click="add(scope.$index, scope.row)"-->
+                <!--type="text"-->
+                <!--size="small">添加副岗位-->
+              <!--</el-button>-->
+              <!--<el-button-->
+                <!--v-else-->
+                <!--@click="del(scope.$index, scope.row)"-->
+                <!--type="text"-->
+                <!--size="small">-->
+                <!--删除-->
+              <!--</el-button>-->
+            <!--</template>-->
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
 
-    <el-col :span="24" class="toolbar" style="margin-bottom:10px;">
-      <el-button type="primary" @click="onSave">保存</el-button>
-      <el-button type="primary" @click="onClear">清空</el-button>
-    </el-col>
+    <el-dialog title="调职" :visible.sync="dialogEditFormVisible">
+      <el-form :model="editForm" :ref="editForm" label-width="100px">
+        <el-form-item label="主属部门">
+          <!-- 引入子组件 定义一个on的方法监听子组件的状态-->
+          <departmentTree v-on:childByValue="childByValue"></departmentTree>
+        </el-form-item>
 
-    <el-table
-        :data="empOrgUnitList"
-        border
-        max-height="500"
-        style="width: 100%">
-        <el-table-column
-          prop="empId"
-          label="员工编号"
-          width="120">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="员工姓名">
-        </el-table-column>
-        <el-table-column
-          prop="orgUnit"
-          label="部门"
-          width="120">
-        </el-table-column>
-      <el-table-column
-        prop="position"
-        label="职位"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="isMaster"
-        width="140"
-        label="主属部门">
-      </el-table-column>
-      <el-table-column
-        prop="effect_date"
-        label="生效日期"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="invalid_date"
-        label="失效日期"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        fixed="right"
-        label="操作"
-        width="150">
-        <template scope="scope">
-          <el-button
-            @click="editOrg(scope.$index, scope.row)"
-            type="text"
-            size="small">
-            编辑
-          </el-button>
-          <el-button
-            @click="voidOrg(scope.$index, scope.row)"
-            type="text"
-            size="small">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-      </el-table>
+        <el-form-item label="主岗位">
+          <el-select v-model="editForm.position" placeholder="请选择">
+            <el-option
+              v-for="item in selectList.positionList"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="生效日期">
+          <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="editForm.effectDate"
+            placeholder="选择日期范围">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogEditFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="transfer_">调职</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="副岗位添加" :visible.sync="dialogAddFormVisible">
+      <el-form :model="addForm" :ref="addForm" label-width="100px">
+        <el-form-item label="部门">
+          <!-- 引入子组件 定义一个on的方法监听子组件的状态-->
+          <departmentTree v-on:childByValue="childByValue2"></departmentTree>
+        </el-form-item>
+
+        <el-form-item label="岗位">
+          <el-select v-model="addForm.position" placeholder="请选择">
+            <el-option
+              v-for="item in selectList.positionList"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="生效日期">
+          <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="addForm.effectDate"
+            placeholder="选择日期范围">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogAddFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPosition_">确定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="副岗位删除" :visible.sync="dialogDeleteFormVisible">
+      <el-form :model="deleteForm" :ref="deleteForm" label-width="100px">
+        <el-form-item label="失效日期">
+          <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="deleteForm.expireDate"
+            placeholder="选择日期范围">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deletePosition_">确定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-  import NProgress from 'nprogress'
-  import { getIssuedOrgUnitInfra,queryOrgUnit } from '@/api/mgr';
+  import { findPositions, transfer, addPosition, deletePosition, findPositionsHis  } from '@/api/position';
+  import { getPositionList } from '@/api/mgr'
+  import departmentTree from './DepartmentTree'
 
   export default {
     name: 'empOrgUnitMgr',
+    components: { departmentTree },
     data () {
       return {
-        orgUnitList:[],
-        empInfra:{
-          "id":"",
-          "empId": "",
-          "name" : "",
-          "registerDate" : "",
-          "orgUnit" : "",
-          "position":"",
-          "isMaster":false
+        activeName: 'first',
+        searchForm: {
+          empNo: '',
+          name: '',
+          registerDate: '',
+          deptName: '',
+          rank: '',
+          isMaster: '0'
         },
-        empOrgUnitList:[
-          {
-            "id":"",
-            "empId": "A01010101",
-            "name" : "BBBBBBB",
-            "effect_date" : "2016-05-24",
-            "invalid_date":"",
-            "orgUnit" : "",
-            "position":"",
-            "isMaster":true
-          }, {
-             "id":"",
-            "empId": "A01010101",
-            "name" : "BBBBBBB",
-            "effect_date" : "2016-10-23",
-            "invalid_date":"",
-            "orgUnit" : "",
-            "position":"",
-            "isMaster":false
-          }
-        ],
-        watch:{
-          'empInfra.empId':'getEmpUnitInfra'
+        searchFormHis: {
+          empNo: '',
+          name: '',
+          deptName: ''
         },
-        rules: {
-          empId: [
-            { required: true, message: '请输入员工工号' }
-          ],
-          orgUnit: [
-            { required: true, message: '请选择部门' }
-          ],
-          position: [
-            { required: true, message: '请选择岗位' }
-          ],
-          isMaster: [
-            { required: true, message: '请选择是否主属部门' }
-          ],
-          effect_date: [
-            { required: true, message: '请选择生效日期' }
-          ]
+        responsibility: [],
+        responsibility_: [],
+
+        //下拉框
+        selectList: {
+          positionList: []
+        },
+
+        dialogEditFormVisible: false,
+        dialogAddFormVisible: false,
+        dialogDeleteFormVisible: false,
+        editForm: {
+          empId: '',
+          departmentName: '',
+          departmentId: '',
+          position: '',
+          effectDate: '',
+        },
+        addForm: {
+          empId: '',
+          departmentName: '',
+          departmentId: '',
+          position: '',
+          effectDate: '',
+        },
+        deleteForm: {
+          id: '',
+          expireDate: '',
         }
       }
     },
     methods: {
-      getEmpUnitInfra( value, oldValue ){
-        alert( value + " " + oldValue );
-       /* var me = this;
-        if( me.empInfra.empId == "")  {
-         me.onClear();
-          return;
-        }
-        //--------------------------------------------------------------------------------------------------------------
-        var para = { empId:value}; */
-
-
+      handleClick(tab, event) {
+        console.log(tab, event);
       },
-      onSave(){
-        var me = this;
-        //--------------------------------------------------------------------------------------------------------------
-        me.$refs[ "empInfra" ].validate((valid) => {
-          if ( valid ) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
+
+      findPositions_() {
+        let params = this.searchForm
+        findPositions(params).then(response => {
+          this.responsibility = response.data
+        })
+      },
+      findPositionsHis_() {
+        let params = this.searchFormHis
+        findPositionsHis(params).then(response => {
+          this.responsibility_ = response.data
+        })
+      },
+      onClear() {
+        this.searchForm = {
+          empNo: '',
+            name: '',
+            registerDate: '',
+            deptName: '',
+            rank: '',
+            isMaster: '0'
+        }
+      },
+
+      edit($index, row) {
+        this.editForm = {
+          empId: row.empId,
+          departmentName: '',
+          departmentId: '',
+          position: '',
+          effectDate: '',
+        }
+        this.dialogEditFormVisible = true
+      },
+
+      add($index, row) {
+        this.addForm = {
+          empId: row.empId,
+          departmentName: '',
+          departmentId: '',
+          position: '',
+          effectDate: '',
+        }
+        this.dialogAddFormVisible = true
+      },
+
+      del($index, row) {
+        this.deleteForm = {
+          id: row.id,
+          effectDate: ''
+        }
+        this.dialogDeleteFormVisible = true
+      },
+
+      //调岗位：主岗位
+      transfer_() {
+        let params = {
+          empId: this.editForm.empId,
+          positionId: this.editForm.position,
+          effectDate: this.editForm.effectDate
+        }
+        transfer(params).then(response => {
+          this.$message({message: '调职/转岗成功！', type: 'success'})
+        })
+      },
+
+      //添加副岗位
+      addPosition_() {
+        let params = {
+          empId: this.addForm.empId,
+          positionId: this.addForm.position,
+          effectDate: this.addForm.effectDate
+        }
+        addPosition(params).then(response => {
+          this.$message({message: '岗位添加成功！', type: 'success'})
+        })
+      },
+
+      //删除副岗位
+      deletePosition_() {
+        let params = {
+          id: this.deleteForm.id,
+          expireDate: this.deleteForm.expireDate
+        }
+        deletePosition(params).then(response => {
+          this.$message({message: '岗位删除成功！', type: 'success'})
+        })
+      },
+
+      //部门树子组件传值给父组件
+      childByValue(departmentName, departmentId) {
+        this.editForm.departmentName = departmentName
+        this.editForm.departmentId = departmentId
+
+        let param = { 'deptId': this.editForm.departmentId }
+        this.getPositions(param)
+      },
+
+      childByValue2(departmentName, departmentId) {
+        this.addForm.departmentName = departmentName
+        this.addForm.departmentId = departmentId
+
+        let param = { 'deptId': this.addForm.departmentId }
+        this.getPositions(param)
+      },
+
+      //获取岗位
+      getPositions(param) {
+        let options = []
+        getPositionList(param).then(response => {
+          let positions = response.data
+          for(var i=0; i<positions.length; i++) {
+            let position = positions[i];
+            let option = {}
+            option.label = position.name
+            option.value = position.id
+            options.push(option)
           }
-        });
+          this.selectList.positionList = options
+        })
       },
-      //远程获取组织信息
-      remoteGetOrg( query ) {
-        var me = this;
-        //--------------------------------------------------------------------------------------------------------------
-        if (query !== '') {
-          let para = {
-            query: query
-          };
-          NProgress.start();
-          queryOrgUnit(para).then((res) => {
-            me.orgUnitList = res.data.records;
-          });
-          NProgress.done();
-        } else {
-          this.orgUnitList = [];
-        }
-      },
-      onClear(){
-        var me = this;
-        //--------------------------------------------------------------------------------------------------------------
-        me.$refs[ "empInfra" ].resetFields();
-        me.empOrgUnitList = [];
-      },
-      editOrg(){
-
-      },
-      voidOrg(){
-
-      }
     }
   }
 </script>

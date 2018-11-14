@@ -6,12 +6,10 @@
         <el-form  :model="empForm" :rules="rules" ref="empForm" size="small" label-position="left" label-width="100px" style="margin:10px 10px 10px 10px;">
           <el-card class="box-card">
             <el-form-item>
-              <el-button type="primary" size="small" @click="formSubmit('empForm')">保存</el-button>
+              <el-button type="primary" size="small" @click="save()">保存</el-button>
               <el-button type="success" size="small" @click="formSubmitNext('empForm')">保存继续</el-button>
               <el-button type="info" size="small" @click="formReset('empForm')">清空</el-button>
-              <!--<el-button type="primary" size="small" @click="confireEmpNum">生成工号</el-button>-->
-              <el-button type="primary" size="small" @click="formCopy('empForm')">复制模板</el-button>
-              <el-button type="warning" size="small" @click="batchUpLoad">批量导入</el-button>
+              <el-button type="warning" size="small" v-popover:popover4>批量导入</el-button>
             </el-form-item>
 
             <div class="tip">
@@ -74,14 +72,13 @@
               <el-col :span="8" align="center">
                 <el-upload
                   class="avatar-uploader"
-                  :disabled="imageUpload.disabled"
-                  :data="imageUpload.data"
+                  :data="image.data"
                   action="api/SpringMVC006/fileUpload3.do"
                   :show-file-list="true"
                   :limit=1
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="imageUpload.flag" v-bind:src="imageUpload.imageUrl" class="avatar">
+                  <img v-if="image.url" v-bind:src="image.url" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                 </el-upload>
@@ -417,9 +414,9 @@
                 <el-form-item label="状态">
                   <span>{{ props.row.statusId }}</span>
                 </el-form-item>
-                <el-form-item label="生效日">
-                  <span>{{ props.row.effectDate }}</span>
-                </el-form-item>
+                <!--<el-form-item label="生效日">-->
+                  <!--<span>{{ props.row.effectDate }}</span>-->
+                <!--</el-form-item>-->
                 <el-form-item label="结算方式">
                   <span>{{ props.row.settlingId }}</span>
                 </el-form-item>
@@ -481,23 +478,40 @@
       <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
     </el-tabs>
 
-    <el-dialog title="批量创建" v-model="batchUploadVisible" :visible.sync="batchUploadVisible">
-      <el-form :model="batchUploadForm" label-width="100px">
-        <el-upload
-          class="upload-demo"
-          action="api/SpringMVC006/uploadExcel.do"
-          multiple
-          :limit="3"
-          :on-exceed="handleExceed"
-          :file-list="fileList">
-          <el-button size="small" type="primary">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过1000kb</div>
-        </el-upload>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="batchUploadVisible = false">关闭</el-button>
-      </div>
-    </el-dialog>
+    <!--<el-dialog title="批量创建" v-model="batchUploadVisible" :visible.sync="batchUploadVisible">-->
+      <!--<el-form :model="batchUploadForm" label-width="100px">-->
+        <!--<el-upload-->
+          <!--class="upload-demo"-->
+          <!--action="api/SpringMVC006/uploadExcel.do"-->
+          <!--multiple-->
+          <!--:limit="3"-->
+          <!--:on-exceed="handleExceed"-->
+          <!--:file-list="fileList">-->
+          <!--<el-button size="small" type="primary">点击上传</el-button>-->
+          <!--<div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过1000kb</div>-->
+        <!--</el-upload>-->
+      <!--</el-form>-->
+      <!--<div slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="batchUploadVisible = false">关闭</el-button>-->
+      <!--</div>-->
+    <!--</el-dialog>-->
+
+    <el-popover
+      ref="popover4"
+      placement="bottom"
+      width="450"
+      trigger="click">
+      <el-upload
+        class="upload-demo"
+        action="api/SpringMVC006/uploadExcel.do"
+        multiple
+        :limit="3"
+        :on-exceed="handleExceed"
+        :on-preview="handlePreview">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+    </el-popover>
 
     <el-dialog
       width="30%"
@@ -540,39 +554,7 @@
     data () {
       return {
         multipleSelection: [],
-        tableData5: [{
-          id: '12987122',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987123',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987125',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987126',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }],
+        tableData5: [],
         activeName: 'second',
 
         fileList: [],
@@ -681,6 +663,42 @@
           ]
         },
 
+        employee: {
+          firstName: '小',                   //姓（中文）
+          lastName: '红',                    //名 (中文)
+          name: '小红',                      //姓名
+          efirstName: 'xiao',               //姓（英文）
+          elastName: 'hong',                //名（英文）
+          ename: 'xiaohong',                //英文名
+          gender: '0',                      //性别
+          birthDate: '1993-04-18',          //出生日
+          idNumber: '34112519904181234',    //身份证号码
+          nation: '1',                      //名族
+          origin: '1',                      //籍贯
+          education: '1',                   //学历
+          politics: '1',                    //政治面貌
+          isMarried: '0',                   //婚姻状况
+          email: 'xiohong@ivo.com',         //邮箱
+          phone: '123456',                   //电话
+          address: '昆山',                   //居住地址
+          idAddress: '昆山',                 //身份证地址
+          scopeId: '0',                     //归属公司，或叫员工范围
+          isOperator: '0',                  //DL/IDL标识
+          groupId: '0',                     //组别－J team; T team; C team   通过组别可控制是否需要打卡
+          registerDate: '2018-06-12',       //入职时间
+          source: '0',                      //员工来源；推荐、外包、派遣
+          sourceMemo: '',                   //来源说明备注  公司名称、员工工号
+          statusId: '0',                    //状态：临时、实习、试用、正式
+          settlingId: '0',                  //结算方式
+        },
+
+        image: {
+          url: '',
+          data: {
+            empId: ''
+          }
+        },
+
         empForm: {
           empNo: '',             //工号
           firstName: '小',         //姓（中文）
@@ -725,14 +743,6 @@
 
         },
 
-        imageUpload: {
-          flag: false,
-          imageurl: '',
-          disabled: true,
-          data: {
-            empNo: ''
-          }
-        },
 
 
 
@@ -830,19 +840,12 @@
       }
     },
     computed: {
-      empNo() {
-        return this.empForm.empNo
-      }
+
     },
     watch: {
       filterText(val) {
         this.$refs.tree.filter(val)
       },
-      empNo(newValue, oldValue) {
-        this.imageUpload.data.empNo = newValue
-        this.imageUpload.disabled = false
-        console.log(this.imageUpload.data)
-      }
     },
     created: function () {
       var me = this;
@@ -855,32 +858,89 @@
       me.getNotSubmitEmployee()
     },
     methods: {
-      submit() {
-        console.log(this.multipleSelection);
-        var params = JSON.stringify(this.multipleSelection)
-        submitEmployeeBatch(params).then(response => {
-        })
-      },
+      //处理复选框选中项
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
+
+      //保存employee
+      save() {
+        saveEmployee(this.employee).then(response => {
+          this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
+          this.image.data.empId = response.empId
+        })
+      },
+
+      //提交选中的employee
+      submit() {
+        submitEmployeeBatch(this.multipleSelection).then(response => {
+        })
+      },
+
+      //查询到还没有做提交的employee数据
       getNotSubmitEmployee() {
         queryNotSubmitEmployee().then(response => {
           this.tableData5 = response.data
         })
       },
+
+      //tab切换
       handleClick(tab, event) {
         console.log(tab, event);
       },
 
-
-
-
+      //获取组织树
       getTree() {
         getOrgTree().then(response => {
           this.orgTree = response.data
         })
       },
+
+      //图片上传前
+      beforeAvatarUpload(file) {
+        if(this.image.data.empId === '') {
+          this.$message.error('上传前请先保存');
+          return false
+        }
+
+
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M
+      },
+
+      //图片上传成功后
+      handleAvatarSuccess(res, file) {
+        var empId = this.image.data.empId;
+        this.image.url = 'api/SpringMVC006/image?empId=' + empId;
+      },
+
+     //excel上传前
+      handlePreview(file) {
+      },
+
+      //excel上传成功后
+      handleExceed() {
+      },
+
+
+
+
+
+
+
+
+
       showInnerVisible() {
         this.orgInfraDialog.innerVisible = true
       },
@@ -913,7 +973,7 @@
           }
         });
         if(flag) {
-          saveEmployee(this.empForm).then(response => {
+          saveEmployee(this.employee).then(response => {
             var empNo = response.empNo
             this.empForm.empNo = empNo
             console.log(this.empForm.empNo)
@@ -995,43 +1055,14 @@
           me.empForm.effect_date = "";
           me.empForm.settling = "";
       },
-      handleExceed() {
 
-      },
       batchUpLoad() {
          var  me = this;
          me.batchUploadVisible = true;
       },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
-      handlePreview(file) {
-        console.log(file);
-      },
-      handleAvatarSuccess(res, file) {
-        console.log(res)
-        console.log(file)
-        console.log(file.raw)
-        console.log(URL.createObjectURL(file.raw))
-        //this.imageUpload.imageUrl = URL.createObjectURL(file.raw);
 
-        var empNo = this.empForm.empNo;
-        this.imageUpload.imageUrl = 'api/SpringMVC006/image?empNo=' + empNo;
-        this.imageUpload.flag = true
-        console.log(this.imageUpload.imageUrl)
-      },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
-        }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-        }
-        return isJPG && isLt2M;
-      },
+
 
       //远程获取组织信息
       remoteGetOrg( query ) {
